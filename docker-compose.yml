@@ -1,0 +1,31 @@
+version: "2.3"
+x-defaults: &defaults
+  restart: unless-stopped
+  build:
+    args:
+      SENTRY_IMAGE: ${SENTRY_IMAGE}
+  depends_on:
+    - redis
+    - postgres
+  env_file: .env
+  environment:
+    SENTRY_REDIS_HOST: redis
+    SENTRY_POSTGRES_HOST: postgres
+  volumes:
+      - D:\sentry\install:/scratch/sentry
+services:
+   redis:
+    image: redis
+    container_name: REDIS_SENTRY
+   postgres:
+    image: postgres:9.5
+    container_name: POSTGRES_SENTRY
+    volumes:
+      - D:\sentry\postgres:/scratch/postgres
+   web:
+    ports:
+      - '9000:9000'
+   cron:
+      - command: run cron
+   worker:
+      - command: run worker
